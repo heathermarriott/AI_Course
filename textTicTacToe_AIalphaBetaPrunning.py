@@ -1,0 +1,134 @@
+import copy
+COL=3
+ROW=3
+
+def legal_move(current_board, move):
+    if current_board[move//3][move%3]=='X' or current_board[move//3][move%3]=='O':
+        return False
+    return True
+
+def game_over(current_board):
+    win=check_winner(current_board)
+    if win != 0:
+        return True #true winner
+    for move in range(9):
+        if current_board[move//3][move%3] != 'X' and current_board[move//3][move%3] != 'O':
+            return False #no winner and empty spots
+    return True #tie game
+
+def check_winner(current_board): #-1=Xs 0=tie, 1=Os Omaximizing player,X min
+    for row in range(ROW):
+        if current_board[row][0]==current_board[row][1]==current_board[row][2]:
+            return -1 if current_board[row][0]=="X" else 1
+    for col in range(COL):
+        if current_board[0][col]==current_board[1][col]==current_board[2][col]:
+            return -1 if current_board[0][col]=="X" else 1
+    #check diagonals
+    if current_board[0][0]==current_board[1][1]==current_board[2][2]:
+            return -1 if current_board[0][0]=="X" else 1
+    if current_board[2][0]==current_board[1][1]==current_board[0][2]:
+            return -1 if current_board[2][0]=="X" else 1
+    return 0
+
+def ai_move(current_board, alpha, beta):
+    max_score=-2
+    make_move=-1
+    #look at all possible moves and select max
+    for move in range(9):
+        if legal_move(current_board, move):
+            #deep copy of board
+            copy_board=copy.deepcopy(current_board)
+            copy_board[move//3][move%3]='O'
+
+            if game_over(copy_board): #our hpy move made us win, or tie
+                score=check_winner(copy_board)
+            else:
+                [pm, ms]=player_hyp_move(copy_board, alpha, beta)
+                
+                score=ms
+                #print("looking at player moving ", pm, "min score", ms)
+                    
+            if score > max_score:
+                max_score=score
+                make_move=move
+            alpha = max(alpha, score)
+            #print("*****new alpha =",alpha)
+            if beta <= alpha:
+                break  #apha beta prunning
+            
+    return [make_move, max_score]
+
+#hypothetical player move so we can look ahead and block
+#player's next winning move
+def player_hyp_move(current_board, alpha, beta):
+    min_score=2
+    make_move=-1
+    #look at all possible moves and select min
+    for move in range(9):
+        if legal_move(current_board, move):
+            #deep copy of board
+            copy_board=copy.deepcopy(current_board)
+            copy_board[move//3][move%3]='X'
+
+            if game_over(copy_board):
+                score=check_winner(copy_board)
+            else:
+                [aim, aims]=ai_move(copy_board, alpha, beta)
+                
+                score=aims
+                
+            if score < min_score:
+                min_score=score
+                make_move=move
+            beta=min(beta, score)
+            #print("*****new beta =",beta)
+            if beta <= alpha:
+                break #alpha beta prunning
+            #print("possible future board")
+            #print_board(copy_board)
+    #print("player best move is ", make_move)
+    return [make_move, min_score]
+
+def print_board(current_board):
+    for row in range(ROW):
+        for col in range(COL):
+            print(f" {current_board[row][col]}  ", end="")
+            
+            if col < COL-1:
+                print("|", end="")
+        if row < ROW-1:
+            print('\n', '-'*12)
+
+board=[[0,1,2],[3,4,5],[6,7,8]] 
+print_board(board)
+num_moves=0
+marker='O'
+while num_moves < 9 and (check_winner(board)==0):
+    print('\n\n')
+    if marker=='X':
+        move=int(input(f"{marker} Enter your move:"))
+    else:
+        print("AI is Thinking (do not type anything)......")
+        [move,temp] = ai_move(board, -999,999)
+    while not legal_move(board, move):
+        print("Illegal move")
+        move=int(input("\n\nEnter your move:"))
+    board[move//3][move%3] = marker
+
+    if marker=='X':
+        marker='O'
+    else:
+        marker='X'
+    num_moves+=1
+    print_board(board)
+w=check_winner(board)
+    
+if w==0:
+    print("Tie")
+elif w==-1:
+    print("X wins")
+else:
+    print("O wins")
+
+        
+    
