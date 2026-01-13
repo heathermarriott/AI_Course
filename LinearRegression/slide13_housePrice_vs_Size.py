@@ -16,7 +16,7 @@ def train(X, Y, w):
     #small lr, tiny steps, slower and safer
     #higher lr, faster but might overshoot best solution
     lr=.001 #learning rate(step size)
-    iterations=10000
+    iterations=500000
     for i in range(iterations):
        current_loss=trainingLoss(X, Y, w)
        updated_loss=trainingLoss(X, Y, [w[0]+lr, w[1]])
@@ -36,7 +36,7 @@ def train(X, Y, w):
            print(f" epoch {i+1} training loss: {loss:.3f}")
     print("new w = ", w)
     return w
-    
+
 # Sample data
 house_size = [1000, 1400, 2050, 2650]
 price = [150000, 200000, 250000, 300000]
@@ -70,4 +70,3 @@ plt.legend()
 
 # Display the plot
 plt.show()
-
