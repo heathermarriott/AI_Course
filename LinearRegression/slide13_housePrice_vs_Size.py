@@ -15,14 +15,14 @@ def trainingLoss(X, Y, w):
 def train(X, Y, w):
     #small lr, tiny steps, slower and safer
     #higher lr, faster but might overshoot best solution
-    lr=1 #learning rate(step size)
+    lr=.001 #learning rate(step size)
     iterations=10000
     for i in range(iterations):
-       current_loss=trainingLoss(house_size, price, w)
-       updated_loss=trainingLoss(house_size, price, [w[0]+lr, w[1]])
-       updated_loss2=trainingLoss(house_size, price, [w[0]-lr, w[1]])
-       updated_loss3=trainingLoss(house_size, price, [w[0], w[1]+lr])
-       updated_loss4=trainingLoss(house_size, price, [w[0], w[1]-lr])
+       current_loss=trainingLoss(X, Y, w)
+       updated_loss=trainingLoss(X, Y, [w[0]+lr, w[1]])
+       updated_loss2=trainingLoss(X, Y, [w[0]-lr, w[1]])
+       updated_loss3=trainingLoss(X, Y, [w[0], w[1]+lr])
+       updated_loss4=trainingLoss(X, Y, [w[0], w[1]-lr])
        if updated_loss < current_loss:
             w[0] += lr
        elif updated_loss2 < current_loss:    
@@ -70,3 +70,4 @@ plt.legend()
 
 # Display the plot
 plt.show()
+
