@@ -43,6 +43,7 @@ else:
 #normally I would put the import statement at the top
 #putting it here in case folks copy/paste into existing code
 from tensorflow.keras.utils import load_img, img_to_array
+import numpy as np 
 
 img_path = "labCoat_28x28.png"
 img = load_img(img_path, color_mode="grayscale", target_size=(28, 28))
